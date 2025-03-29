@@ -6,3 +6,21 @@ venv/
 __pycache__/
 *.pyc
 *.pyo
+
+# Archivos de logs y caché
+*.log
+logs/
+cache/
+
+# Archivos de dependencias de Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Archivos de Docker (si usas Docker)
+*.env
+docker-compose.override.yml
+
+# Archivos de IDEs y editores (VSCode, PyCharm, etc.)
+.vscode/
+.idea/
+*.iml
