@@ -15,7 +15,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 #Clave secreta para JWT (del .env)
 SECRET_KEY = os.getenv("SECRET_KEY", "clave_secreta_por_defecto")
 ALGORITHM = "HS256"
-ACCES_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 def hash_password(password: str) -> str:
     """Hashea una contraseña usando bcrypt."""
