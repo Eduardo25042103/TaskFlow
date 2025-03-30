@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app import models, schemas
 from app.database import get_db
 from app.routes.auth import get_current_user
-from app.services.task_service import update_task
+from app.services.task_service import update_task, delete_task
 
 
 
@@ -39,5 +39,13 @@ def update_task_endpoint(task_id: int, task_update: schemas.TaskUpdate, db: Sess
     task_data = task_update.dict(exclude_unset=True)
     updated_task = update_task(db, task_id, task_data, current_user)
     if updated_task is None:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Task not found or not permitted")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found or not permitted")
     return updated_task
+
+
+@router.delete("{task_id}")
+def delete_task_endpoint(task_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    deleted_task = delete_task(db, task_id, current_user)
+    if deleted_task is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found or not permitted")
+    return {"detail": "Task deleted successfully"}
