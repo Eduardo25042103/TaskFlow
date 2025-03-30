@@ -10,7 +10,7 @@ class Task(Base):
     title = Column(String, index=True)
     description = Column(String, nullable=True)
     completed = Column(Boolean, default=False)
-    create_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False) #Nueva columna con FK
     user = relationship("User", back_populates="tasks") #Relación con User
 

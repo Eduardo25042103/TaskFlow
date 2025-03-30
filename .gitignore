@@ -21,6 +21,10 @@ pip-delete-this-directory.txt
 docker-compose.override.yml
 Dockerfile
 
+migrations/versions/*.pyc
+migrations/versions/*.py
+
+
 # Archivos de IDEs y editores (VSCode, PyCharm, etc.)
 .vscode/
 .idea/
