@@ -1,5 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
+from typing import Optional
+
 
 class TaskBase(BaseModel):
     title: str
@@ -8,6 +10,16 @@ class TaskBase(BaseModel):
 
 class TaskCreate(TaskBase):
     pass
+
+
+class TaskUpdate(TaskBase):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    completed: Optional[bool] = None
+
+    class Config:
+        orm_mode = True
+
 
 class Task(TaskBase):
     id: int
