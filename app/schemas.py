@@ -15,7 +15,7 @@ class Task(TaskBase):
     created_at: datetime
 
     class Config:
-        orn_mode = True
+        orm_mode = True
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -30,4 +30,4 @@ class User(BaseModel):
     email: EmailStr
 
     class Config:
-        orn_mode = True
+        orm_mode = True

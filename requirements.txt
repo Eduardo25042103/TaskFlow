@@ -7,4 +7,3 @@ python-dotenv
 alembic
 passlib[bcrypt]
 pyjwt
-python-dotenv
