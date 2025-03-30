@@ -13,6 +13,7 @@ class Task(TaskBase):
     id: int
     completed: bool
     created_at: datetime
+    user_id: int
 
     class Config:
         orm_mode = True
