@@ -1,21 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app import models, schemas
-from app.database import SessionLocal, engine
+from app.database import get_db
 
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
-
-# Crea la base de datos si no existe
-models.Base.metadata.create_all(bind=engine)
-
-# Dependencia para obtener la sesión de la base de datos
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @router.post("/", response_model=schemas.Task)
