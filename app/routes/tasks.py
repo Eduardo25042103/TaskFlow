@@ -10,7 +10,7 @@ from app.services.task_service import update_task, delete_task
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 
-@router.post("/", response_model=schemas.Task)
+@router.post("/", response_model=schemas.Task, status_code=201)
 def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     db_task = models.Task(**task.dict(), user_id=current_user.id)
     db.add(db_task)
