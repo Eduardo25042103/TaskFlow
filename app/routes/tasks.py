@@ -43,7 +43,7 @@ def update_task_endpoint(task_id: int, task_update: schemas.TaskUpdate, db: Sess
     return updated_task
 
 
-@router.delete("{task_id}")
+@router.delete("/{task_id}", status_code=204)
 def delete_task_endpoint(task_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     deleted_task = delete_task(db, task_id, current_user)
     if deleted_task is None:
