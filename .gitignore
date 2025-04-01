@@ -29,3 +29,27 @@ migrations/versions/*.py
 .vscode/
 .idea/
 *.iml
+
+#PARTE DE FRONTEND
+# Node.js
+frontend/node_modules/
+frontend/.vite/
+frontend/dist/
+
+# Archivos de construcción de React/Vite
+build/
+dist/
+
+# Archivos de log de npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de entorno de Node
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Archivos generados por IDEs para frontend (si no se ignoran ya)
+.DS_Store
