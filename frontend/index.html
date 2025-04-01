@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Gestión de Tareas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>TaskFlow</h1>
+        <p>Gestiona tus tareas de manera sencilla y creativa</p>
+    </header>
+    <main>
+        <section id="create-task">
+            <h2>Crear Tarea</h2>
+            <form id="task-form">
+                <input type="text" id="title" name="title" placeholder="Título de la tarea" required>
+                <textarea name="description" id="description" placeholder="Descripción (opcional)"></textarea>
+                <button type="submit">Crear Tarea</button>
+            </form>
+        </section>
+        <section>
+            <h2>Mis Tareas</h2>
+            <ul id="tasks"></ul>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 TaskFlow</p>
+    </footer>
+    <script>
+        // más adelante se integra la conexión a la API
+        //por ahora se deja para crear la base
+        document.getElementById('task-form').addEventListener('submit', function(e){
+            e.preventDefault();
+            alert('Funcionalidad pendiente de integrar con la API')        
+        });
+    </script>   
+</body>
+</html>
