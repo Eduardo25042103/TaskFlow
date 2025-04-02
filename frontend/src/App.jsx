@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './App.css';
-import LoginPage from './pages/LoginPage'; 
+import LoginPage from './pages/LoginPage';
+
 
 function App() {
   const [token, setToken] = useState(null);
