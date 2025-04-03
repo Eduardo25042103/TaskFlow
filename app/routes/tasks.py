@@ -7,7 +7,7 @@ from app.services.task_service import update_task, delete_task
 
 
 
-router = APIRouter(prefix="/tasks", tags=["tasks"])
+router = APIRouter(tags=["tasks"])
 
 
 @router.post("/", response_model=schemas.Task, status_code=201)

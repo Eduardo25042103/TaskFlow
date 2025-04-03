@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.database import get_db
@@ -7,7 +7,7 @@ from app.services.auth_service import hash_password, verify_password, create_acc
 from datetime import timedelta
 
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(tags=["auth"])
 security = HTTPBearer()
 
 
@@ -28,13 +28,21 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 
 @router.post("/login")
-def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
+def login(user: schemas.UserLogin, db: Session = Depends(get_db), response: Response = None):
     """Autentica un usuario y devuelve un token JWT."""
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
+    print(f"Intento de login con email: {user.email}")
     if not db_user or not verify_password(user.password, db_user.hashed_password):
+
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
     
     token = create_access_token(data={"sub": db_user.email}, expires_delta=timedelta(minutes=30))
+    # Añadir headers CORS adicionales manualmente
+    if response:
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept"
     return {"access_token": token, "token_type": "bearer"}
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)):
@@ -54,4 +62,8 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         raise credentials_exception
 
     return user
+
+@router.get("/test")
+def test_auth():
+    return {"status": "ok", "message": "El sistema de autenticación está funcionando"}
         
