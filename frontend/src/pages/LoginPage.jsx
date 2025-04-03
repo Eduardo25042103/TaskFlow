@@ -14,8 +14,8 @@ function LoginPage({ onLogin }) {
     setIsLoading(true);
 
     const API_URL = import.meta.env.VITE_API_URL || "https://legendary-space-adventure-w6q44575754c7pp-8000.app.github.dev";
-    console.log("Usando API URL:", API_URL);
-    console.log("Intentando iniciar sesión con:", { email, password: "***" });
+    /*console.log("Usando API URL:", API_URL);
+    console.log("Intentando iniciar sesión con:", { email, password: "***" });*/
     
 
 
@@ -26,13 +26,14 @@ function LoginPage({ onLogin }) {
         headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify({ email, password }),
         mode: "cors",
-        credential: "omit"
+        credentials: "include"
       
       });
+
       console.log("Status code:", response.status);
       console.log("Response headers:", Object.fromEntries([...response.headers]));
       const responseText = await response.text();
-      console.log("Response text:", responseText);
+      console.log("Response text:", responseText); //Mejor conservar para debug
 
 
       if (!response.ok) {
@@ -51,7 +52,6 @@ function LoginPage({ onLogin }) {
         const data = JSON.parse(responseText);
         console.log("Login exitoso:", data);
         localStorage.setItem("token", data.access_token);
-        onLogin(data.access_token);
         navigate("/dashboard");
       } catch (e) {
         console.error("Error al parsear JSON:", e);

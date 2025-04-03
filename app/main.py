@@ -12,7 +12,7 @@ frontend_url = os.getenv("FRONTEND_URL", "https://legendary-space-adventure-w6q4
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En desarrollo, permite todos los orígenes
+    allow_origins=["frontend_url"],  # En desarrollo, permite todos los orígenes
     allow_origin_regex=r"https://.*\.app\.github\.dev",  # Permite cualquier subdominio de github.dev
     allow_credentials=True,
     allow_methods=["*"],
