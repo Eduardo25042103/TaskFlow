@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 function TaskDashboard() {
     const [tasks, setTasks] = useState([]);
@@ -6,12 +8,18 @@ function TaskDashboard() {
     const [newTaskDescription, setNewTaskDescription] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
-    // Make sure this URL points to your backend API, not your frontend
     const API_URL = import.meta.env.VITE_API_URL || "https://legendary-space-adventure-w6q44575754c7pp-8000.app.github.dev";
 
     //Función para obtener el token desde localStorage
     const getToken = () => localStorage.getItem("token");
+
+    // Función para cerrar sesión
+    const handleLogout = () => {
+      localStorage.removeItem("token");
+      navigate("login");
+    }
 
     // Función para obtener las tareas del usuario
     const fetchTasks = async () => {
@@ -152,7 +160,15 @@ function TaskDashboard() {
     return(
         <div className="p-8">
             <h1 className="text-3xl font-bold mb-4">Dashboard de Tareas</h1>
-
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold">Dashboard de Tareas</h1>
+                <button 
+                    onClick={handleLogout}
+                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                >
+                    Cerrar Sesión
+                </button>
+            </div>
             {error && <p className="text-red-500 mb-4">{error}</p>}
             {isLoading ? (
                 <p>Cargando tareas...</p>
