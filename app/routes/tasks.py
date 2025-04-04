@@ -48,4 +48,4 @@ def delete_task_endpoint(task_id: int, db: Session = Depends(get_db), current_us
     deleted_task = delete_task(db, task_id, current_user)
     if deleted_task is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found or not permitted")
-    return {"detail": "Task deleted successfully"}
+    return None

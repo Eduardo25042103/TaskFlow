@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 
 function TaskDashboard() {
-    const [tasks, setTask] = useState([]);
+    const [tasks, setTasks] = useState([]);
     const [newTaskTitle, setNewTaskTitle] = useState("");
     const [newTaskDescription, setNewTaskDescription] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+
+    const API_URL = import.meta.env.VITE_API_URL || "https://legendary-space-adventure-w6q44575754c7pp-8000.app.github.dev";
 
 
     //Función para obtener el token desde localStorage
@@ -17,21 +19,34 @@ function TaskDashboard() {
         setIsLoading(true);
         setError("");
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks`, {
+          const apiUrl = `${API_URL}/tasks`;
+          console.log("Fetching from:", apiUrl);
+
+            const response = await fetch(`${API_URL}/tasks`, {
               method: "GET",
               headers: {
-                "Contend-Type": "application/json",
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${getToken()}`,
               },
             });
+            const contentType = response.headers.get("content-type");
+            console.log("Content-Type de respuesta:", contentType);
+
             if (!response.ok) {
+                const responseText = await response.text();
+                console.error("Respuesta completa:", responseText);
                 throw new Error(`Error al obtener tareas: ${response.status}`);
             }
+            if (!contentType || !contentType.includes("application/json")) {
+              const text = await response.text();
+              console.error("Respuesta no-JSON:", text);
+              throw new Error("La respuesta del servidor no es JSON válido");
+          }
             const data = await response.json();
-            setTask(data);
+            setTasks(data);
         } catch(err) {
-            console.error(err);
-            setError("Error al obtener tareas");
+          console.log("Error completo:", err);
+          setError(`Error al obtener tareas: ${err.message}`);
         } finally {
             setIsLoading(false);
         }
@@ -41,14 +56,19 @@ function TaskDashboard() {
     // Se llama a fetchTasks al montar el componente
     useEffect(() => {
         fetchTasks();
+        const token = getToken();
+
+        console.log("Token disponible:", !!token);
+        console.log("Primeros caracteres del token:", token ? token.substring(0, 10) + "..." : "No hay token");
+  
     }, []);
 
     // Función para crear una nueva tarea
     const handleCreateTask = async (e) => {
         e.preventDefault();
-        setError();
+        setError("");
         try{
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks/`, {
+            const response = await fetch(`${API_URL}/tasks/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
