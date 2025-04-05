@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import ThemeToggle from "../components/ThemeToggle";
 
 function TaskDashboard() {
     const [tasks, setTasks] = useState([]);
@@ -363,6 +364,7 @@ function TaskDashboard() {
                     </div>
                 </div>
             </div>
+            <ThemeToggle />
         </div>
     );
 }
