@@ -3,12 +3,16 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app import models, schemas
-from app.services.auth_service import hash_password, verify_password, create_access_token, decode_access_token
+from app.services.auth_service import hash_password, verify_password, create_access_token, create_refresh_token, decode_access_token, decode_refresh_token
 from datetime import timedelta
-
+from pydantic import BaseModel
 
 router = APIRouter(tags=["auth"])
 security = HTTPBearer()
+
+
+class RefreshRequest(BaseModel):
+    refresh_token: str
 
 
 @router.post("/register", response_model=schemas.User)
@@ -36,15 +40,36 @@ def login(user: schemas.UserLogin, db: Session = Depends(get_db), response: Resp
 
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
     
-    token = create_access_token(data={"sub": db_user.email}, expires_delta=timedelta(minutes=30))
+    access_token = create_access_token(data={"sub": db_user.email}, expires_delta=timedelta(minutes=30))
     # Añadir headers CORS adicionales manualmente (Ya no es necesario)
     """if response:
         response.headers["Access-Control-Allow-Origin"] = "*"
         response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept""" 
+    refresh_token = create_refresh_token(data={"sub": db_user.email})
+    return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
+
+
+@router.post("/refresh-token")
+def refresh_token(request: RefreshRequest, db: Session = Depends(get_db)):
+    """Genera un nuevo token de acceso usando un token de refresh válido"""
+    #Decodifica y verifica el token de refresh
+    payload = decode_refresh_token(request.refresh_token)
+    if payload is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired refresh token", headers={"WWW-Authenticate": "Bearer"},)
     
-    return {"access_token": token, "token_type": "bearer"}
+    #Verifica que el usuario existe
+    email = payload.get("sub")
+    user = db.query(models.User).filter(models.User.email == email).first()
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found", headers={"WWW-Authenticate": "Bearer"},)
+    
+    # Generar nuevo token de acceso
+    access_token = create_access_token(data={"sub": email})
+
+    return {"access_token": access_token, "token_type": "bearer"}
+
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)):
     token = credentials.credentials  # Extrae solo el token sin "Bearer "

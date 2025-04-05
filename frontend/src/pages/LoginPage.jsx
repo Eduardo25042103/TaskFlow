@@ -1,75 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
-function LoginPage({ onLogin }) {
+function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate(); // Hook para navegación
+  const navigate = useNavigate();
+  const { login, isAuthenticated, isLoading } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setIsLoading(true);
-
-    const API_URL = import.meta.env.VITE_API_URL || "https://legendary-space-adventure-w6q44575754c7pp-8000.app.github.dev";
-    /*console.log("Usando API URL:", API_URL);
-    console.log("Intentando iniciar sesión con:", { email, password: "***" });*/
     
-
-
     try {
-      console.log("Enviando datos de login:", { email });
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ email, password }),
-        mode: "cors",
-        credentials: "include"
-      
-      });
-
-      console.log("Status code:", response.status);
-      console.log("Response headers:", Object.fromEntries([...response.headers]));
-      const responseText = await response.text();
-      console.log("Response text:", responseText); //Mejor conservar para debug
-
-
-      if (!response.ok) {
-        let errorMessage;
-        try {
-          const errorData = JSON.parse(responseText);
-          errorMessage = errorData.detail || "Error al iniciar sesión";
-        } catch (e) {
-          errorMessage = `Error ${response.status}: ${responseText || "Sin mensaje"}`;
-        }
-        setError(errorMessage);
-        return;
-      }
-
-      try {
-        const data = JSON.parse(responseText);
-        console.log("Login exitoso:", data);
-        localStorage.setItem("token", data.access_token);
-        navigate("/dashboard");
-      } catch (e) {
-        console.error("Error al parsear JSON:", e);
-        setError("Error al procesar la respuesta del servidor");
-      }
+      await login(email, password);
+      // No need to navigate here, the login function will handle it
     } catch (err) {
-      console.error("Error de red:", err);
-      setError(`Error de red: ${err.message}`);
-    } finally {
-      setIsLoading(false);
+      setError(err.message || "Error al iniciar sesión");
     }
   };
   
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      navigate("/dashboard"); // Redirige si ya está autenticado
+    if (isAuthenticated) {
+      navigate("/dashboard");
     }
-  }, [navigate]);
+  }, [isAuthenticated, navigate]);
   
 
   return (
@@ -190,6 +146,5 @@ function LoginPage({ onLogin }) {
     </div>
   );
 }
-
 
 export default LoginPage;

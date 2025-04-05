@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "../contexts/AuthContext";
 
 function TaskDashboard() {
     const [tasks, setTasks] = useState([]);
@@ -8,18 +7,9 @@ function TaskDashboard() {
     const [newTaskDescription, setNewTaskDescription] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
+    const { authFetch, logout } = useAuth();
 
     const API_URL = import.meta.env.VITE_API_URL || "https://legendary-space-adventure-w6q44575754c7pp-8000.app.github.dev";
-
-    //Función para obtener el token desde localStorage
-    const getToken = () => localStorage.getItem("token");
-
-    // Función para cerrar sesión
-    const handleLogout = () => {
-      localStorage.removeItem("token");
-      navigate("login");
-    }
 
     // Función para obtener las tareas del usuario
     const fetchTasks = async () => {
@@ -28,13 +18,7 @@ function TaskDashboard() {
         try {
             console.log("Fetching tasks from:", `${API_URL}/tasks/`);
             
-            const response = await fetch(`${API_URL}/tasks/`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${getToken()}`,
-                },
-            });
+            const response = await authFetch(`${API_URL}/tasks/`);
             
             if (!response.ok) {
                 const errorText = await response.text();
@@ -55,15 +39,7 @@ function TaskDashboard() {
 
     // Se llama a fetchTasks al montar el componente
     useEffect(() => {
-        const token = getToken();
-        console.log("Token available:", !!token);
-        
-        if (token) {
-            fetchTasks();
-        } else {
-            setError("No hay token de autenticación disponible");
-            console.error("Authentication token not found");
-        }
+        fetchTasks();
     }, []);
 
     // Función para crear una nueva tarea
@@ -71,12 +47,8 @@ function TaskDashboard() {
         e.preventDefault();
         setError("");
         try{
-            const response = await fetch(`${API_URL}/tasks/`, {
+            const response = await authFetch(`${API_URL}/tasks/`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${getToken()}`,
-                },
                 body: JSON.stringify({
                     title: newTaskTitle,
                     description: newTaskDescription,
@@ -104,12 +76,8 @@ function TaskDashboard() {
     const handleDeleteTask = async (taskId) => {
         setError("");
         try{
-            const response = await fetch(`${API_URL}/tasks/${taskId}`, {
+            const response = await authFetch(`${API_URL}/tasks/${taskId}`, {
                 method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${getToken()}`,
-                },
             });
             
             if (response.status !== 204) {
@@ -129,12 +97,8 @@ function TaskDashboard() {
     const handleUpdateTask = async (taskId, updatedData) => {
         setError("");
         try{
-            const response = await fetch(`${API_URL}/tasks/${taskId}`, {
+            const response = await authFetch(`${API_URL}/tasks/${taskId}`, {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${getToken()}`,
-                },
                 body: JSON.stringify(updatedData),
             });
             
@@ -159,11 +123,10 @@ function TaskDashboard() {
 
     return(
         <div className="p-8">
-            <h1 className="text-3xl font-bold mb-4">Dashboard de Tareas</h1>
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold">Dashboard de Tareas</h1>
                 <button 
-                    onClick={handleLogout}
+                    onClick={logout}
                     className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
                 >
                     Cerrar Sesión
