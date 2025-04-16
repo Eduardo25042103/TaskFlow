@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 
 app = FastAPI(title = "TaskFlow with Python and React", version = "1.0")
-frontend_url = os.getenv("FRONTEND_URL", "https://legendary-space-adventure-w6q44575754c7pp-5173.app.github.dev")
+frontend_url = os.getenv("FRONTEND_URL", "https://special-fortnight-r95xx6g67pj3x6r7-5173.app.github.dev")
 
 
 

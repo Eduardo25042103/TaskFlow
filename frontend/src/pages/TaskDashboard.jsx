@@ -11,7 +11,7 @@ function TaskDashboard() {
     const [isFormExpanded, setIsFormExpanded] = useState(false);
     const { authFetch, logout, user } = useAuth();
 
-    const API_URL = import.meta.env.VITE_API_URL || "https://legendary-space-adventure-w6q44575754c7pp-8000.app.github.dev";
+    const API_URL = import.meta.env.VITE_API_URL || "https://special-fortnight-r95xx6g67pj3x6r7-8000.app.github.dev";
 
     // Función para obtener las tareas del usuario
     const fetchTasks = async () => {

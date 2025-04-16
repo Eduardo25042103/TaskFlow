@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  const API_URL = import.meta.env.VITE_API_URL || "https://legendary-space-adventure-w6q44575754c7pp-8000.app.github.dev";
+  const API_URL = import.meta.env.VITE_API_URL || "https://special-fortnight-r95xx6g67pj3x6r7-8000.app.github.dev";
 
   // Función para guardar tokens en localStorage
   const saveTokens = useCallback((access, refresh = null) => {
